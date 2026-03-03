@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { LogOut, User } from "lucide-react";
 import Icon from "./Icon";
+import { useAuth } from "../context/AuthContext";
 
 const navItems = [
   { to: "/",              label: "Dashboard",    icon: "dashboard"     },
@@ -17,6 +19,14 @@ const navItems = [
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
 
   return (
     <div className="app-shell">
@@ -54,6 +64,31 @@ export default function Layout() {
           <button className="topbar-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <Icon name="menu" />
           </button>
+
+          {/* User Menu */}
+          <div className="ml-auto flex items-center gap-4">
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
+              >
+                <User size={20} />
+                <span className="text-sm font-medium">{user?.email || 'Usuario'}</span>
+              </button>
+
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full px-4 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2 transition"
+                  >
+                    <LogOut size={18} />
+                    Cerrar sesión
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </header>
         <main className="main-content">
           <Outlet />

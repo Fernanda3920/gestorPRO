@@ -1,6 +1,9 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
 import Layout from "./components/Layout";
 import LocalesPage from "./pages/LocalesPage";
+import LoginPage from "./pages/LoginPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
 
 const Placeholder = ({ titulo }) => (
@@ -13,19 +16,31 @@ const Placeholder = ({ titulo }) => (
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/"              element={<Placeholder titulo="Dashboard" />} />
-          <Route path="/locales"       element={<LocalesPage />} />
-          <Route path="/contratos"     element={<Placeholder titulo="Contratos" />} />
-          <Route path="/expedientes"   element={<Placeholder titulo="Expedientes" />} />
-          <Route path="/incrementos"   element={<Placeholder titulo="Incrementos" />} />
-          <Route path="/financiero"    element={<Placeholder titulo="Financiero" />} />
-          <Route path="/arrendatarios" element={<Placeholder titulo="Arrendatarios" />} />
-          <Route path="/reportes"      element={<Placeholder titulo="Reportes" />} />
-          <Route path="/configuracion" element={<Placeholder titulo="Configuración" />} />
-        </Route>
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+
+          <Route
+            element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/" element={<Placeholder titulo="Dashboard" />} />
+            <Route path="/locales" element={<LocalesPage />} />
+            <Route path="/contratos" element={<Placeholder titulo="Contratos" />} />
+            <Route path="/expedientes" element={<Placeholder titulo="Expedientes" />} />
+            <Route path="/incrementos" element={<Placeholder titulo="Incrementos" />} />
+            <Route path="/financiero" element={<Placeholder titulo="Financiero" />} />
+            <Route path="/arrendatarios" element={<Placeholder titulo="Arrendatarios" />} />
+            <Route path="/reportes" element={<Placeholder titulo="Reportes" />} />
+            <Route path="/configuracion" element={<Placeholder titulo="Configuración" />} />
+          </Route>
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
