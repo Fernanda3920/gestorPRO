@@ -1,15 +1,9 @@
 {
   "version": 2,
+  // build step: use the package.json in this directory to run `npm run build`
   "builds": [
-    {
-      "src": "src/**/*",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
-    },
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    }
+    { "src": "package.json", "use": "@vercel/static-build" },
+    { "src": "api/**/*.js", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1.js" },
