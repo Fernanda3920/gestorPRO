@@ -42,6 +42,40 @@ Esto iniciará el servidor en:
 http://localhost:5173
 ```
 
+## Despliegue en Vercel (frontend + API)
+
+1. **Instala el CLI** (opcional para pruebas locales):
+   ```bash
+   npm install -g vercel
+   ```
+2. **Inicia sesión** y elige el proyecto desde la carpeta `gestionPRO`:
+   ```bash
+   vercel login
+   vercel
+   ```
+3. Vercel detectará automáticamente el framework (Vite) y la carpeta `api`
+   para funciones serverless. Cualquier archivo JS/TS dentro de `/api`
+   se convertirá en una función accesible en `https://<tu-proyecto>.vercel.app/api/<nombre>`.
+4. Usa variables de entorno (Settings → Environment Variables) para
+   `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, y cualquier otra que
+   necesites en tus funciones Node.
+
+### Estructura de funciones
+
+- `api/hello.js` contiene un ejemplo básico. Puedes agregar más rutas o
+  mover tu backend Node aquí. Importa módulos normales, instala
+  dependencias en `package.json`, y Vercel las empaquetará.
+- Agrega un `vercel.json` (ya incluido) si quieres personalizar rutas o
+  configuraciones de compilación.
+
+> **Nota:** En producción, Vercel compila el frontend con `npm run
+deploy` usando la configuración de `vite.config.js` y expone el bundle
+estático junto a las funciones.
+
+
+
+
+
 # 1. Descripción General
 
 GestiónPRO es un sistema administrativo para la gestión de locales comerciales que centraliza:
