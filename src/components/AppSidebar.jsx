@@ -9,6 +9,7 @@ import {
   Users,
   BarChart3,
   Settings,
+  X,
 } from "lucide-react";
 
 const navItems = [
@@ -22,48 +23,55 @@ const navItems = [
   { to: "/reportes",      label: "Reportes",       icon: BarChart3 },
   { to: "/configuracion", label: "Configuración",  icon: Settings },
 ];
-
-const AppSidebar = () => {
+const AppSidebar = ({ open, onClose }) => {
   const location = useLocation();
 
-  return (
-    <aside className="w-60 min-h-screen bg-white border-r border-gray-200 flex flex-col py-6">
-      {/* Logo */}
-      <div className="px-6 mb-8 flex items-center gap-2">
-        {/* Ícono cuadrado con fondo violeta, igual al de la imagen */}
-        <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center flex-shrink-0">
-          <Store className="h-4 w-4 text-white" />
+return (
+    <>
+      {/* Overlay oscuro en móvil */}
+      <div
+        className={`sidebar-overlay ${open ? "show" : ""}`}
+        onClick={onClose}
+      />
+
+      <aside className={`app-sidebar ${open ? "open" : ""}`}>
+        {/* Logo */}
+        <div className="sidebar-header flex items-center">
+          <div className="logo-box">
+            <Store className="logo-icon" />
+          </div>
+          <span className="logo-text">GestorPro</span>
+          <button
+            onClick={onClose}
+            aria-label="Cerrar menú"
+            className="ml-auto md:hidden p-2 rounded hover:bg-gray-100"
+          >
+            <X />
+          </button>
         </div>
-        <span className="text-lg font-bold text-gray-900 tracking-tight">
-          GestorPro
-        </span>
-      </div>
 
-      {/* Nav items */}
-      <nav className="flex-1 px-3 space-y-0.5">
-        {navItems.map((item) => {
-          const isActive =
-            item.to === "/"
-              ? location.pathname === "/"
-              : location.pathname.startsWith(item.to);
+        <nav className="sidebar-nav">
+          {navItems.map((item) => {
+            const isActive =
+              item.to === "/"
+                ? location.pathname === "/"
+                : location.pathname.startsWith(item.to);
 
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-violet-600 text-white"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-              }`}
-            >
-              <item.icon className="h-4 w-4 flex-shrink-0" />
-              {item.label}
-            </NavLink>
-          );
-        })}
-      </nav>
-    </aside>
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={onClose}
+                className={`nav-link ${isActive ? "active" : ""}`}
+              >
+                <item.icon className="nav-icon" />
+                {item.label}
+              </NavLink>
+            );
+          })}
+        </nav>
+      </aside>
+    </>
   );
 };
 

@@ -115,33 +115,33 @@ export default function LocalesPage() {
               </tr>
             </thead>
             <tbody>
-              {filtrados.map((l) => {
-                const est = ESTATUS[l.estatus] ?? { label: l.estatus, color: "#94a3b8" };
-                return (
-                  <tr
-                    key={l.id}
-                    className="table-row--clickable"
-                    onClick={() => abrirEditar(l)}
-                    title="Clic para editar"
-                  >
-                    <td><strong>{l.numero}</strong></td>
-                    <td>{l.metros_cuadrados}</td>
-                    <td>
-                      <span className="badge" style={{ "--badge-color": est.color }}>
-                        <span className="badge-dot" style={{ background: est.color }} />
-                        {est.label}
-                      </span>
-                    </td>
-                    <td>{fmt(l.renta)}</td>
-                    <td>{fmt(l.mantenimiento_mensual)}</td>
-                    <td><strong>{fmt(l.total)}</strong></td>
-                    <td>{fmt(l.renta_por_m2)}</td>
-                    <td>{fmt(l.mantenimiento_por_m2)}</td>
-                    <td>{fmt(l.promedio_por_m2)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
+  {filtrados.map((l) => {
+    const est = ESTATUS[l.estatus] ?? { label: l.estatus, color: "#94a3b8" };
+
+    return (
+      <tr
+        key={l.id}
+        className="table-row--clickable"
+        onClick={() => abrirEditar(l)}
+      >
+        <td data-label="Local"><strong>{l.numero}</strong></td>
+        <td data-label="m²">{l.metros_cuadrados}</td>
+        <td data-label="Estatus">
+          <span className="badge" style={{ "--badge-color": est.color }}>
+            <span className="badge-dot" style={{ background: est.color }} />
+            {est.label}
+          </span>
+        </td>
+        <td data-label="Renta">{fmt(l.renta)}</td>
+        <td data-label="Mant.">{fmt(l.mantenimiento_mensual)}</td>
+        <td data-label="Total"><strong>{fmt(l.total)}</strong></td>
+        <td data-label="$/m² Renta">{fmt(l.renta_por_m2)}</td>
+        <td data-label="$/m² Mant.">{fmt(l.mantenimiento_por_m2)}</td>
+        <td data-label="Prom/m²">{fmt(l.promedio_por_m2)}</td>
+      </tr>
+    );
+  })}
+</tbody>
           </table>
         </div>
       )}

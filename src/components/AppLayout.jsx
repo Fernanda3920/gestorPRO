@@ -12,24 +12,21 @@ const AppLayout = () => {
       {/* Sidebar */}
       <div
         className={`transition-all duration-300 ease-in-out flex-shrink-0 ${
-          sidebarOpen ? "w-60" : "w-0"
+          sidebarOpen
+            ? "fixed inset-0 z-40 w-full md:static md:w-60"
+            : "w-0 md:static md:w-0"
         } overflow-hidden`}
       >
-        <AppSidebar />
+        <AppSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       </div>
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top header — solo tiene el botón hamburguesa */}
         <header className="h-12 flex items-center px-4 border-b border-gray-200 bg-white flex-shrink-0">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="h-8 w-8 text-gray-500 hover:text-gray-800"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
+         <button onClick={() => setSidebarOpen(true)}>
+  <Menu />
+</button>
         </header>
 
         {/* Página activa */}

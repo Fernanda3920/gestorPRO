@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, X } from "lucide-react";
 import Icon from "./Icon";
 import { useAuth } from "../context/AuthContext";
 
@@ -18,6 +18,13 @@ const navItems = [
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    // Close sidebar on small screens by default
+    if (typeof window !== 'undefined') {
+      setSidebarOpen(window.innerWidth >= 768);
+    }
+  }, []);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -31,12 +38,25 @@ export default function Layout() {
   return (
     <div className="app-shell">
       {/* Sidebar */}
+      {/* Overlay para móvil */}
+      <div
+        className={`sidebar-overlay ${sidebarOpen ? "show" : ""}`}
+        onClick={() => setSidebarOpen(false)}
+      />
+
       <aside className={`sidebar ${sidebarOpen ? "sidebar--open" : "sidebar--closed"}`}>
         <div className="sidebar-logo">
           <div className="logo-icon">
             <Icon name="locales" />
           </div>
           <span className="logo-text">GestorPro</span>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Cerrar menú"
+            className="ml-auto md:hidden p-2 rounded hover:bg-gray-100"
+          >
+            <X />
+          </button>
         </div>
         <nav className="sidebar-nav">
           {navItems.map((item) => {
