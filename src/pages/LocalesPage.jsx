@@ -27,8 +27,17 @@ export default function LocalesPage() {
 
   const fetchLocales = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from("locales").select("*").order("numero");
-    if (!error) setLocales(data);
+    try {
+      const response = await fetch('/api/locales');
+      const result = await response.json();
+      if (result.success) {
+        setLocales(result.data);
+      } else {
+        console.error('Error fetching locales:', result.error);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
     setLoading(false);
   };
 

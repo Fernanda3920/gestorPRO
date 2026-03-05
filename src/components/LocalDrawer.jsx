@@ -72,34 +72,44 @@ export default function LocalDrawer({ open, onClose, onSaved, local = null }) {
 
     let savedId = local?.id;
 
-    if (esEdicion) {
-      // UPDATE
-      const { error: updateError } = await supabase
-        .from("locales")
-        .update(payload)
-        .eq("id", local.id);
-      if (updateError) { setError(updateError.message); setLoading(false); return; }
-    } else {
-      // INSERT
-      const { data, error: insertError } = await supabase
-        .from("locales")
-        .insert([payload])
-        .select()
-        .single();
-      if (insertError) { setError(insertError.message); setLoading(false); return; }
-      savedId = data.id;
-    }
+    try {
+      if (esEdicion) {
+        // UPDATE
+        payload.id = local.id;
+        const response = await fetch('/api/locales', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (!result.success) throw new Error(result.error);
+        savedId = result.data.id;
+      } else {
+        // INSERT
+        const response = await fetch('/api/locales', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (!result.success) throw new Error(result.error);
+        savedId = result.data.id;
+      }
 
-    // Subir imágenes nuevas (si las hay)
-    for (const file of imagenes) {
-      const ext  = file.name.split(".").pop();
-      const path = `local-${savedId}/${Date.now()}.${ext}`;
-      await supabase.storage.from("locales-imagenes").upload(path, file);
-    }
+      // Subir imágenes nuevas (si las hay)
+      for (const file of imagenes) {
+        const ext  = file.name.split(".").pop();
+        const path = `local-${savedId}/${Date.now()}.${ext}`;
+        await supabase.storage.from("locales-imagenes").upload(path, file);
+      }
 
-    setLoading(false);
-    onSaved();
-    onClose();
+      setLoading(false);
+      onSaved();
+      onClose();
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
   };
 
   const handleClose = () => {
