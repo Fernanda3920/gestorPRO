@@ -159,7 +159,7 @@ export default async function handler(req, res) {
 
     if (method === 'DELETE') {
 
-      const { id } = req.query
+      const id = req.query.id || req.body.id
 
       if (!id) {
         return res.status(400).json({
