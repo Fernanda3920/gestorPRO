@@ -3,6 +3,8 @@
 Este documento contiene los comandos de **PowerShell** necesarios para interactuar con la API. 
 
 > **Nota Importante:** Reemplaza los valores de `id` y `$TOKEN` por los reales antes de ejecutar.
+Tambien considerar que el token AUTH obtenido despues de ejecutar el cliente tiene duracion de 1hr (Inspeccionar > Application > localStorage > http://localhost:5173)
+
 
 ---
 
@@ -115,4 +117,50 @@ $respuesta = Invoke-RestMethod -Method Get `
     -Headers @{ Authorization = "Bearer $TOKEN" }
 
 $respuesta.data | Format-Table id, nombre, estado, email
+  ```
+
+---
+
+## CREAR UN CONTRATO
+  ```powershell
+$body = @{
+    local_id          = 100
+    inquilino_id      = "02d1da52-a400-41a8-a6e0-6c5f8f829d3a"
+    fecha_inicio      = "2026-03-06"
+    fecha_vencimiento = "2027-03-06"
+    renta             = 15000
+    estatus           = "activo"
+} | ConvertTo-Json
+
+Invoke-RestMethod -Method Post -Uri "https://gestor-12ez05mt8-fernandanevarez7171-gmailcoms-projects.vercel.app/api/contratos" `
+  -Headers @{ Authorization = "Bearer $TOKEN"; "Content-Type" = "application/json" } -Body $body
+  ```
+
+  
+## LEER LOS CONTRATOS
+  ```powershell
+Invoke-RestMethod -Method Get -Uri "https://gestor-12ez05mt8-fernandanevarez7171-gmailcoms-projects.vercel.app/api/contratos" `
+  -Headers @{ Authorization = "Bearer $TOKEN" } | Select-Object -ExpandProperty data
+  ```
+
+  ## ACTUALIZAR (ESTADO DEL CONTRATO)
+  ```powershell
+
+$bodyUpdate = @{
+    id      = "1ed2cb4c-5c3a-4481-9766-e0d0bf659da9"
+    estatus = "vencido"
+} | ConvertTo-Json
+
+Invoke-RestMethod -Method Put -Uri "https://gestor-12ez05mt8-fernandanevarez7171-gmailcoms-projects.vercel.app/api/contratos" `
+  -Headers @{ Authorization = "Bearer $TOKEN"; "Content-Type" = "application/json" } -Body $bodyUpdate
+  ```
+  Los valores aceptables son "activo", "vencido" y "cancelado"
+
+  
+  ## BORRAR (ESTADO DEL CONTRATO)
+  ```powershell
+$bodyDelete = @{ id = "1ed2cb4c-5c3a-4481-9766-e0d0bf659da9"; action = "delete" } | ConvertTo-Json
+
+Invoke-RestMethod -Method Post -Uri " https://gestor-12ez05mt8-fernandanevarez7171-gmailcoms-projects.vercel.app/api/contratos" `
+  -Headers @{ Authorization = "Bearer $TOKEN"; "Content-Type" = "application/json" } -Body $bodyDelete
   ```
