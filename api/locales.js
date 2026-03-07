@@ -69,13 +69,13 @@ export default async function handler(req, res) {
 
     }
 
+ // =========================
+    // POST (Soporta CREATE y DELETE vía action)
     // =========================
-    // POST
-    // =========================
-
     if (method === 'POST') {
-
       const {
+        id,
+        action,
         numero,
         metros_cuadrados,
         estatus,
@@ -83,6 +83,24 @@ export default async function handler(req, res) {
         mantenimiento_mensual
       } = req.body
 
+      // Lógica de Borrado Alternativa (Para cuando DELETE falla)
+      if (action === 'delete' && id) {
+        console.log("Eliminando local vía POST action:", id)
+        
+        const { error: deleteError } = await supabaseAdmin
+          .from('locales')
+          .delete()
+          .eq('id', id)
+
+        if (deleteError) throw deleteError
+
+        return res.status(200).json({
+          success: true,
+          message: 'Local eliminado correctamente vía POST'
+        })
+      }
+
+      // Lógica Normal de Creación
       if (!numero || !metros_cuadrados) {
         return res.status(400).json({
           error: 'Número y metros cuadrados son requeridos'
@@ -107,9 +125,7 @@ export default async function handler(req, res) {
         success: true,
         data
       })
-
     }
-
     // =========================
     // PUT
     // =========================
