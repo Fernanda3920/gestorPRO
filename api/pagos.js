@@ -8,7 +8,6 @@ export default async function handler(req, res) {
   try {
     switch (method) {
       case 'GET':
-        // Consultar pagos con información relacionada de contratos y locales
         const { data: getData, error: getError } = await supabase
           .from('pagos')
           .select('*, contratos(inquilino_id), locales(numero)');
@@ -16,7 +15,6 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, data: getData });
 
       case 'POST':
-        // Lógica para eliminar si se recibe la acción correspondiente
         if (req.body.action === 'delete') {
           const { error: delError } = await supabase
             .from('pagos')
@@ -26,23 +24,26 @@ export default async function handler(req, res) {
           return res.status(200).json({ success: true, message: "Pago eliminado" });
         }
         
-        // Creación: Se envía el body tal cual. 
-        // La columna "diferencia" la calcula la base de datos automáticamente.
+        // Limpiamos los campos que la base de datos genera automáticamente
+        const datosParaInsertar = { ...req.body };
+        delete datosParaInsertar.diferencia;
+        delete datosParaInsertar.estado; // Eliminamos 'estado' para que lo asigne la DB
+
         const { data: postData, error: postError } = await supabase
           .from('pagos')
-          .insert([req.body])
+          .insert([datosParaInsertar])
           .select();
         
         if (postError) throw postError;
         return res.status(201).json({ success: true, data: postData });
 
       case 'PUT':
-        // Actualización: Se extrae el ID y se actualizan los campos restantes.
-        // No enviamos "diferencia" para evitar errores de restricción.
         const { id, ...updateData } = req.body;
         
-        // Si por error viene 'diferencia' en el body, la eliminamos antes de enviar a Supabase
+        // Evitamos enviar campos generados en la actualización
         delete updateData.diferencia;
+        // Solo enviamos el estado en el PUT si realmente necesitas cambiarlo manualmente después
+        // Si también es generado en el UPDATE, podrías necesitar borrarlo aquí también.
 
         const { data: putData, error: putError } = await supabase
           .from('pagos')
