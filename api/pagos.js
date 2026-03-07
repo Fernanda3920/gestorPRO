@@ -24,10 +24,8 @@ export default async function handler(req, res) {
           return res.status(200).json({ success: true, message: "Pago eliminado" });
         }
         
-        // Limpiamos los campos que la base de datos genera automáticamente
-        const datosParaInsertar = { ...req.body };
-        delete datosParaInsertar.diferencia;
-        delete datosParaInsertar.estado; // Eliminamos 'estado' para que lo asigne la DB
+        // --- LIMPIEZA PARA COLUMNAS GENERADAS ---
+        const { diferencia, estado, ...datosParaInsertar } = req.body;
 
         const { data: postData, error: postError } = await supabase
           .from('pagos')
@@ -40,10 +38,9 @@ export default async function handler(req, res) {
       case 'PUT':
         const { id, ...updateData } = req.body;
         
-        // Evitamos enviar campos generados en la actualización
+        // También quitamos los campos generados aquí por si acaso
         delete updateData.diferencia;
-        // Solo enviamos el estado en el PUT si realmente necesitas cambiarlo manualmente después
-        // Si también es generado en el UPDATE, podrías necesitar borrarlo aquí también.
+        delete updateData.estado;
 
         const { data: putData, error: putError } = await supabase
           .from('pagos')
