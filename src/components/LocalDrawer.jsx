@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
 
-const API_URL_ACTION = "https://gestor-2h2k71rv7-fernandanevarez7171-gmailcoms-projects.vercel.app/api/locales";
+const API_URL_ACTION = "/api/locales";
 
 export default function LocalDrawer({ open, onClose, onSaved, local = null }) {
   const esEdicion = local !== null;

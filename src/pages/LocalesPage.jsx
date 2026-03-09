@@ -3,7 +3,7 @@ import { supabase } from "../lib/supabaseClient";
 import LocalDrawer from "../components/LocalDrawer";
 
 // URL de CONSULTA según tus documentos
-const API_URL_GET = "https://gestor-2h2k71rv7-fernandanevarez7171-gmailcoms-projects.vercel.app/api/locales";
+const API_URL_GET = "/api/locales";
 
 export default function LocalesPage() {
   const [locales, setLocales] = useState([]);
